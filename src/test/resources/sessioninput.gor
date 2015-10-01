@@ -1,0 +1,58 @@
+1 09dfa735716c1663ce902d9b21d545c2935db11e 1441197175512754631
+POST /login HTTP/1.0
+Connection: close
+Content-Length: 200
+Cache-Control: max-age=0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Content-Type: application/x-www-form-urlencoded
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.8
+Cookie:
+
+2 09dfa735716c1663ce902d9b21d545c2935db11e 31109962
+HTTP/1.1 200 OK
+Set-Cookie: JSESSIONID=5OXNwAddALOuwL1aey9oaXHT; Path=/; Secure
+Cache-Control: no-cache
+Pragma: no-cache
+Expires: Wed, 31 Dec 1969 23:59:59 GMT
+Content-Type: text/html;charset=UTF-8
+Content-Language: en-US
+Content-Encoding: gzip
+Vary: Accept-Encoding
+Date: Wed, 02 Sep 2015 12:32:49 GMT
+Connection: close
+
+3 09dfa735716c1663ce902d9b21d545c2935db11e 31109962
+HTTP/1.1 200 OK
+Set-Cookie: JSESSIONID=replayedtoken; Path=/; Secure
+Cache-Control: no-cache
+Pragma: no-cache
+Expires: Wed, 31 Dec 1969 23:59:59 GMT
+Content-Type: text/html;charset=UTF-8
+Content-Language: en-US
+Content-Encoding: gzip
+Vary: Accept-Encoding
+Date: Tue, 29 Sep 2015 11:57:23 GMT
+Connection: close
+
+1 35fde9f050e43ec761e8c0556ff2d3a0a67f723c 1441197175915602972
+GET /some/cool/page
+Connection: close
+Cache-Control: max-age=0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36
+Accept-Encoding: gzip, deflate, sdch
+Accept-Language: en-US,en;q=0.8
+Cookie: _mkto_trk=id:265-FQV-872&token:1432135614752-36371; JSESSIONID=5OXNwAddALOuwL1aey9oaXHT; testing=
+
+2 35fde9f050e43ec761e8c0556ff2d3a0a67f723c 31109962
+HTTP/1.1 200 OK
+Cache-Control: no-cache
+Pragma: no-cache
+Expires: Wed, 31 Dec 1969 23:59:59 GMT
+Content-Type: text/html;charset=UTF-8
+Content-Language: en-US
+Content-Encoding: gzip
+Vary: Accept-Encoding
+Date: Wed, 02 Sep 2015 12:32:49 GMT
+Connection: close
