@@ -24,16 +24,11 @@ public class CookieReplace {
         try (BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in, utf8))) {
             while ((line = stdin.readLine()) != null) {
                 //Decode the input - its in Hex
-                byte[] payload = hex.decode(line.getBytes());
-
-                String output = replacer.processGorInput(new String(payload));
-                if(output != null) {
-                    //Encode the output
-                    String modified = hex.encodeHexString(output.getBytes(utf8));
-                    System.out.println(modified);
-                } else {
-                    System.out.println(line);
-                }
+                byte[] payload = hex.decode(line.getBytes(utf8));
+                //Process the gor payload
+                byte[] output = replacer.processGorInput(payload);
+                //Encode the output
+                System.out.println(hex.encodeHexString(output));
             }
         } catch (IOException | DecoderException e) {
             e.printStackTrace(System.err);
@@ -53,8 +48,28 @@ public class CookieReplace {
     public CookieReplace() {
     }
 
-    public String processGorInput(String httpStr) throws IOException {
-        String[] parts = httpStr.split("\n", -1);
+    public byte[] processGorInput(byte[] httpPayload) throws IOException {
+        //Get the plain text portion of the http request/response (all byte data prior to the double newline)
+        int splitIndex = -1;
+        for(int i=0; i<httpPayload.length-1; i++) {
+            if(httpPayload[i] == '\n') {
+                if(httpPayload[i+1] == '\n') { //Found two newlines in a row
+                    splitIndex = i + 2;
+                    break;
+                } else if(i < httpPayload.length-2 && httpPayload[i+1] == '\r' && httpPayload[i+2] == '\n') { //Found a newline cr newline, ok
+                    splitIndex = i + 3;
+                    break;
+                }
+            }
+        }
+        if(splitIndex == -1) {
+            System.err.println(new String(httpPayload, StandardCharsets.UTF_8));
+            System.err.println("Unable to process http payload**");
+            return httpPayload;
+        }
+
+        String httpText = new String(Arrays.copyOfRange(httpPayload, 0, splitIndex), StandardCharsets.UTF_8);
+        String[] parts = httpText.split("\n", -1);
         //Read the custom header that Gor provides
         String originalHeader = parts[0];
         String[] gorHeader = originalHeader.split(" ");
@@ -63,16 +78,29 @@ public class CookieReplace {
 
         String gorRequestID = gorHeader[1];
         Map<String, String> cookies;
-        switch(httpStr.charAt(0)) {
+        switch(httpText.charAt(0)) {
             case ORIGINAL_REQUEST:
-                return originalHeader+"\n"+processOriginalHttpRequest(parts);
+                byte[] originalHeaderBytes = originalHeader.getBytes(StandardCharsets.UTF_8);
+                byte[] modifiedRequest = processOriginalHttpRequest(parts).getBytes(StandardCharsets.UTF_8);
+                //Put all the pieces back together again
+                byte[] modifiedPayload = new byte[originalHeaderBytes.length+1+modifiedRequest.length+httpPayload.length-splitIndex];
+                //Copy in the gor header line and add a new line
+                System.arraycopy(originalHeaderBytes, 0, modifiedPayload, 0, originalHeaderBytes.length);
+                modifiedPayload[originalHeaderBytes.length] = '\n';
+                //Copy in the modified http request plain-text
+                System.arraycopy(modifiedRequest, 0, modifiedPayload, originalHeaderBytes.length+1, modifiedRequest.length);
+                //Copy in any remaining http data
+                if(httpPayload.length-splitIndex > 0) {
+                    System.arraycopy(httpPayload, splitIndex, modifiedPayload, originalHeaderBytes.length + 1 + modifiedRequest.length, httpPayload.length - splitIndex);
+                }
+                return modifiedPayload;
             case ORIGINAL_RESPONSE:
                 cookies = CookieReplace.getSetCookieHeaders(parts);
                 if (cookies.size() > 0) {
                     requestToOriginalCookies.put(gorRequestID, cookies);
                     System.err.println("Recording Set-Cookie for request " + gorRequestID);
                 }
-                return null;
+                return httpPayload;
             case REPLAY_RESPONSE:
                 if (requestToOriginalCookies.containsKey(gorRequestID)) {
                     cookies = CookieReplace.getSetCookieHeaders(parts);
@@ -85,9 +113,9 @@ public class CookieReplace {
                             }
                     );
                 }
-                return null;
+                return httpPayload;
             default:
-                throw new IOException("Invalid GOR payload - "+httpStr.charAt(0));
+                throw new IOException("Invalid GOR payload - "+httpText.charAt(0));
         }
     }
 

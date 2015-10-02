@@ -17,16 +17,17 @@ public class CookieReplaceTest {
             StringBuilder request = new StringBuilder();
             String line;
             while ((line = in.readLine()) != null) {
-                if(line.isEmpty()) {
-                    replacer.processGorInput(request.toString());
+                if(line.length() > 0 && (line.charAt(0) == '1' || line.charAt(0) == '2' || line.charAt(0) == '3') && line.charAt(1) == ' ' && request.length() > 0) {
+                    System.err.println("Sending request");
+                    replacer.processGorInput(request.toString().getBytes());
                     request.setLength(0);
-                } else {
-                    request.append(line);
-                    request.append("\n");
                 }
+                request.append(line);
+                request.append("\n");
             }
-            //Send the final request
-            replacer.processGorInput(request.toString());
+
+            System.err.println("Sending request");
+            replacer.processGorInput(request.toString().getBytes());
 
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
