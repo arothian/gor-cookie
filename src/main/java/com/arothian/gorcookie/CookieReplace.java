@@ -21,7 +21,7 @@ public class CookieReplace {
         Charset utf8 = StandardCharsets.UTF_8;
         Hex hex = new Hex(utf8);
 
-        try (BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in))) {
+        try (BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in, utf8))) {
             while ((line = stdin.readLine()) != null) {
                 //Decode the input - its in Hex
                 byte[] payload = hex.decode(line.getBytes(utf8));
@@ -29,8 +29,14 @@ public class CookieReplace {
                 String output = replacer.processGorInput(new String(payload, utf8));
 
                 //Encode the output
-                System.out.println(hex.encode(output.getBytes(utf8)));
+                String modified = hex.encodeHexString(output.getBytes(utf8));
+                System.out.println(modified);
 
+//                if(modified.length() != line.length()) {
+//                    System.err.println(String.format("Hex size %s to modified %s", line.length(), modified.length()));
+//                    System.err.println(line);
+//                    System.err.println(modified);
+//                }
             }
         } catch (IOException | DecoderException e) {
             e.printStackTrace(System.err);
@@ -51,9 +57,10 @@ public class CookieReplace {
     }
 
     public String processGorInput(String httpStr) throws IOException {
-        String[] parts = httpStr.split("\n");
+        String[] parts = httpStr.split("\n", -1);
         //Read the custom header that Gor provides
-        String[] gorHeader = parts[0].split(" ");
+        String originalHeader = parts[0];
+        String[] gorHeader = originalHeader.split(" ");
         //Reset parts to just be the raw http request or response
         parts = Arrays.copyOfRange(parts, 1, parts.length);
 
@@ -61,7 +68,7 @@ public class CookieReplace {
         Map<String, String> cookies;
         switch(httpStr.charAt(0)) {
             case ORIGINAL_REQUEST:
-                return processOriginalHttpRequest(parts);
+                return originalHeader+"\n"+processOriginalHttpRequest(parts);
             case ORIGINAL_RESPONSE:
                 cookies = CookieReplace.getSetCookieHeaders(parts);
                 if (cookies.size() > 0) {
