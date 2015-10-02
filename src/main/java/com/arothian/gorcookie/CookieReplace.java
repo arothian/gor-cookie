@@ -24,19 +24,16 @@ public class CookieReplace {
         try (BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in, utf8))) {
             while ((line = stdin.readLine()) != null) {
                 //Decode the input - its in Hex
-                byte[] payload = hex.decode(line.getBytes(utf8));
+                byte[] payload = hex.decode(line.getBytes());
 
-                String output = replacer.processGorInput(new String(payload, utf8));
-
-                //Encode the output
-                String modified = hex.encodeHexString(output.getBytes(utf8));
-                System.out.println(modified);
-
-//                if(modified.length() != line.length()) {
-//                    System.err.println(String.format("Hex size %s to modified %s", line.length(), modified.length()));
-//                    System.err.println(line);
-//                    System.err.println(modified);
-//                }
+                String output = replacer.processGorInput(new String(payload));
+                if(output != null) {
+                    //Encode the output
+                    String modified = hex.encodeHexString(output.getBytes(utf8));
+                    System.out.println(modified);
+                } else {
+                    System.out.println(line);
+                }
             }
         } catch (IOException | DecoderException e) {
             e.printStackTrace(System.err);
@@ -75,7 +72,7 @@ public class CookieReplace {
                     requestToOriginalCookies.put(gorRequestID, cookies);
                     System.err.println("Recording Set-Cookie for request " + gorRequestID);
                 }
-                return httpStr;
+                return null;
             case REPLAY_RESPONSE:
                 if (requestToOriginalCookies.containsKey(gorRequestID)) {
                     cookies = CookieReplace.getSetCookieHeaders(parts);
@@ -88,7 +85,7 @@ public class CookieReplace {
                             }
                     );
                 }
-                return httpStr;
+                return null;
             default:
                 throw new IOException("Invalid GOR payload - "+httpStr.charAt(0));
         }
