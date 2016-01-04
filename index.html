@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Gor-cookie : Gor middleware for rewriting cookie values during replay">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Gor-cookie</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/arothian/gor-cookie">View on GitHub</a>
+
+          <h1 id="project_title">Gor-cookie</h1>
+          <h2 id="project_tagline">Gor middleware for rewriting cookie values during replay</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/arothian/gor-cookie/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/arothian/gor-cookie/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="gor-cookie" class="anchor" href="#gor-cookie" aria-hidden="true"><span class="octicon octicon-link"></span></a>gor-cookie</h1>
+
+<p>Gor middleware(<a href="https://github.com/buger/gor#middleware">https://github.com/buger/gor#middleware</a>) for automatically rewriting cookie values during replay. 
+This allows sessions that use cookies to be replayed against another environment (or the same environment at a later time) correctly.</p>
+
+<h3>
+<a id="building" class="anchor" href="#building" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building</h3>
+
+<p>To build from source, use the Gradle wrapper.</p>
+
+<pre><code>./gradlew build shadow
+</code></pre>
+
+<h3>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h3>
+
+<pre><code>gor --input-file requests.gor --middleware "java -jar gor-cookie-all.jar" --output-http "http://somewebsite"
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Gor-cookie maintained by <a href="https://github.com/arothian">arothian</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
